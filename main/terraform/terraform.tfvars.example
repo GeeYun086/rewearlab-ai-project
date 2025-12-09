@@ -1,0 +1,14 @@
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to git!
+
+acr_password = "your-acr-admin-password"
+
+custom_vision_endpoint   = "https://your-endpoint.cognitiveservices.azure.com/"
+custom_vision_key        = "your-prediction-key"
+custom_vision_project_id = "your-project-id"
+
+# Optional: override defaults
+# resource_group_name = "smu-team1"
+# location = "koreacentral"
+# acr_name = "smuteam1clothingresale"
+# custom_vision_iteration = "Iteration1"

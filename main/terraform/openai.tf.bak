@@ -1,0 +1,30 @@
+# Azure OpenAI 리소스
+resource "azurerm_cognitive_account" "openai" {
+  name                = "clothing-openai-v2-${random_string.suffix.result}"  # v2 추가!
+  location            = "eastus"
+  resource_group_name = data.azurerm_resource_group.main.name
+  kind                = "OpenAI"
+  sku_name            = "S0"
+  
+  tags = {
+    environment = "demo"
+    project     = "clothing-resale"
+  }
+}
+
+# GPT-4o-mini 모델 배포
+resource "azurerm_cognitive_deployment" "gpt4o_mini" {
+  name                 = "gpt-4o-mini"
+  cognitive_account_id = azurerm_cognitive_account.openai.id
+  
+  model {
+    format  = "OpenAI"
+    name    = "gpt-4o-mini"
+    version = "2024-07-18"
+  }
+  
+  sku {
+    name     = "Standard"
+    capacity = 1  # 10 → 1로 변경 (한국 리전 제약)
+  }
+}

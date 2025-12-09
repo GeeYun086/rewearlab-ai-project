@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # ChromaDB 서버
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb-data:/chroma/data
+    environment:
+      - IS_PERSISTENT=TRUE
+    restart: unless-stopped
+    networks:
+      - clothing-network
+
+  # 크롤러 (수동 실행)
+  crawler:
+    build:
+      context: ./crawler
+      dockerfile: Dockerfile
+    container_name: musinsa-crawler
+    volumes:
+      - ./data:/data
+    profiles:
+      - manual  # docker-compose --profile manual up crawler
+    networks:
+      - clothing-network
+
+  # 임베딩 파이프라인 (Streamlit UI)
+  embedding:
+    build:
+      context: ./embedding
+      dockerfile: Dockerfile
+    container_name: musinsa-embedding
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/data
+      - chromadb-data:/app/musinsa_fashion_db_crop
+    environment:
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+    networks:
+      - clothing-network
+
+  # 검색 앱
+  search-app:
+    build:
+      context: ./search-app
+      dockerfile: Dockerfile
+    container_name: musinsa-search-app
+    ports:
+      - "8503:8501"
+    volumes:
+      - chromadb-data:/app/musinsa_fashion_db_crop
+    environment:
+      - CHROMADB_HOST=
+      - CHROMADB_PORT=8000
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+    networks:
+      - clothing-network
+
+  # 메인 앱 (통합 UI)
+  main-app:
+    build:
+      context: ./main-app
+      dockerfile: Dockerfile
+    container_name: clothing-main-app
+    ports:
+      - "8502:8502"
+    environment:
+      # CHROMADB_HOST=chromadb
+      # CHROMADB_PORT=8000
+      - AZURE_CUSTOM_VISION_ENDPOINT=${AZURE_CUSTOM_VISION_ENDPOINT}
+      - AZURE_CUSTOM_VISION_KEY=${AZURE_CUSTOM_VISION_KEY}
+      - AZURE_CUSTOM_VISION_PROJECT_ID=${AZURE_CUSTOM_VISION_PROJECT_ID}
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+    networks:
+      - clothing-network
+
+volumes:
+  chromadb-data:
+    driver: local
+
+networks:
+  clothing-network:
+    driver: bridge
