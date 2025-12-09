@@ -299,7 +299,7 @@ def generate_product_info_with_llm(uploaded_image, similar_items, defect_info):
   (예: '이 브랜드는 무조건 고급' 등 단정 금지)
 
 - 사실과 다르거나 과장된 표현은 금지합니다.
-  (예: “새상품급!”, “사용감 전혀 없음!” 등 입력 없이 사용 금지)
+  (예: "새상품급!", "사용감 전혀 없음!" 등 입력 없이 사용 금지)
 
 - 설명은 구매자가 오해하지 않도록 중립적이고 객관적으로 작성합니다."""
 
@@ -402,7 +402,7 @@ def generate_product_info_template(similar_items):
 
 # === 메인 앱 ===
 st.set_page_config(
-    page_title="변경 중고 의류 재판매 가치 판별",
+    page_title="중고 의류 재판매 가치 판별",
     page_icon="👚",
     layout="wide"
 )
@@ -410,7 +410,31 @@ st.set_page_config(
 # 사이드바
 with st.sidebar:
     st.title("💡 프로젝트 개요")
-    st.markdown("**중고 의류 재판매 가치 판별 서비스**")
+    st.markdown("""### 👚중고 의류 재판매 가치 판별 서비스
+이 서비스는 **중고 의류 판매자를 위한 AI 기반 보조 도구**로, 상품의 *재판매 가치 판별 → 트렌드 분석 → 상품 판매글 자동 생성*까지 판매 준비 과정을 빠르고 간편하게 도와줍니다.
+
+---
+
+### 🌟 제공 기능
+**1) 오염·이염 탐지 (Azure Custom Vision 기반)**  
+- 업로드한 이미지에서 오염/이염 여부를 감지하여  
+  **재판매 가능 여부를 자동 판단**합니다.
+
+**2) 트렌드 유사 상품 매칭 (FashionCLIP + ChromaDB)**  
+- 현재 인기 있는 무신사 베스트 상품과의 유사도를 분석하여  
+  **트렌드 적합성을 확인**할 수 있습니다.
+
+**3) AI 기반 상품 제목·설명 자동 생성**  
+- Azure OpenAI가 유사 상품 정보를 기반으로  
+  **판매에 바로 사용할 수 있는 상품명과 설명을 생성**합니다.
+
+---
+
+### 💡 기대 효과
+- 상품 등록 시간을 단축할 수 있습니다.  
+- 판매 문구 작성에 어려움을 느끼는 판매자에게 도움을 줍니다.  
+- 트렌드 기반 유사 상품 비교로 **경쟁력 있는 가격·문구 설정**이 가능합니다.  """)
+    
     st.markdown("---")
     st.subheader("모델 정보")
     st.text("* 오염 탐지: Azure Custom Vision")
@@ -435,10 +459,21 @@ with st.sidebar:
 
 # 메인 타이틀
 st.title("👚 중고 의류 재판매 가치 판별 서비스")
-st.markdown("**AI 기반 트렌드 분석으로 중고 의류 판매 정보를 자동 생성합니다**")
 
 # Step 1: 이미지 업로드
 st.header("1. 의류 이미지 업로드")
+
+# 포용성 - 촬영 가이드 제공
+with st.expander("📷 중고 의류 촬영 가이드 (분석 정확도 향상을 위해 권장)", expanded=False):
+    st.markdown(
+        """
+- **배경**: 가능하면 **단색 배경**에서 촬영해주세요. (침대시트/바닥 패턴 최소화)
+- **구도**: 옷의 **전체 실루엣이 화면에 모두 나오도록** 촬영해주세요.
+- **밝기**: 충분한 조명 아래에서 촬영하고, 너무 어둡거나 과도하게 밝지 않게 조정해주세요.
+- **구김/접힘**: 옷은 최대한 **펼쳐진 상태**에서 촬영하면 오염·이염 탐지 정확도가 올라갑니다.
+        """
+    )
+
 uploaded_file = st.file_uploader(
     "판매할 중고 의류 이미지를 선택해주세요.",
     type=['jpg', 'jpeg', 'png']
@@ -447,6 +482,9 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert('RGB')
     st.image(image, caption='업로드된 의류 이미지', use_column_width=True)
+    
+    # 개인정보보호 문구
+    st.caption("※ 업로드한 이미지는 분석 후 즉시 삭제되며, 서버에 저장되지 않습니다.")
     st.markdown("---")
     
     # Step 2: 오염 탐지
@@ -464,15 +502,18 @@ if uploaded_file is not None:
     
     with col1:
         if detection_result['is_resellable']:
-            st.success("🟢 **재판매 가능**")
+            st.success("🟢 재판매 가능")
             st.metric("판단 근거", "오염/이염 없음")
         else:
-            st.error("🔴 **재판매 불가**")
+            st.error("🔴 재판매 불가")
             defect_info = detection_result['defects'][0]
             st.metric(
                 "판단 근거",
                 f"{defect_info['type']} 감지 ({defect_info['confidence']:.2%})"
             )
+        
+        # 책임성 문구
+        st.caption("※ 본 결과는 AI 분석 기준이며, 실제 상품 상태는 사용자가 반드시 직접 확인해야 합니다.")
     
     with col2:
         st.info("💡 Azure Custom Vision 모델이 의류 이미지를 분석하여 오염 및 손상을 탐지했습니다.")
@@ -517,13 +558,16 @@ if uploaded_file is not None:
                 for item in similar_items
             ])
             st.dataframe(df_similar, use_container_width=True)
+            
+            # 크롤링 출처 (투명성·책임성)
+            st.caption("※ 유사 상품 정보는 무신사 베스트 상품 데이터를 기반으로 수집되었습니다.")
         else:
             st.warning("유사한 상품을 찾지 못했습니다.")
         
         st.markdown("---")
         
         # Step 5: AI 정보 생성
-        st.header("4. AI 기반 상품 판매 정보 자동 생성")
+        st.header("4. AI 기반 상품 판매 정보 생성")
         
         with st.spinner("🤖 Azure OpenAI로 상품 정보 생성 중..."):
             product_info = generate_product_info_with_llm(
@@ -545,7 +589,14 @@ if uploaded_file is not None:
         st.text_area("상세 설명:", product_info['description'], height=300, key="desc_output")
         
         st.markdown("---")
-        st.success("✅ **축하합니다!** 재판매 가능하며 AI가 트렌드를 반영한 상품 정보를 생성했습니다.")
+        st.success("재판매 가능 판정 및 상품 정보 생성이 완료되었습니다. 판매 전 실제 상품 상태를 꼭 확인해주세요!")
 
 else:
     st.info("👆 이미지를 업로드하여 시작하세요")
+
+# 하단 책임성 문구
+st.markdown("---")
+st.caption(
+    "이 서비스는 중고 의류 판매를 돕기 위한 **AI 보조 도구**입니다.  \n"
+    "AI의 판단 및 추천 문구는 참고용이며, 실제 거래에 대한 **법적·실질적 책임은 사용자에게 있습니다.**  \n"
+)
