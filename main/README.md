@@ -7,7 +7,7 @@
 
 ## 📋 프로젝트 개요
 
-무신사 트렌드 기반 중고 의류 유사도 검색 및 재판매 가능 여부를 AI로 자동 판별하는 서비스입니다.
+트렌드 기반 중고 의류 유사도 검색 및 재판매 가능 여부를 AI로 자동 판별하는 서비스입니다.
 
 ### 주요 기능
 1. **무신사 상품 크롤링** - 카테고리별 상품 데이터 수집 (상의, 아우터, 바지, 원피스/스커트)
@@ -17,7 +17,7 @@
 
 ---
 
-## 🗂️ 프로젝트 구조 (원본 코드 기반)
+## 🗂️ 프로젝트 구조 
 
 ```
 clothing-resale-project/
@@ -25,23 +25,18 @@ clothing-resale-project/
 ├── ARCHITECTURE.md                    # Azure 아키텍처 문서
 │
 ├── crawler/                           # 무신사 크롤러
-│   ├── musinsa_crawler.py            # ✅ 원본 코드 그대로
+│   ├── musinsa_crawler.py            
 │   ├── Dockerfile                     # 크롤러 Docker 이미지
 │   └── requirements.txt
 │
 ├── embedding/                         # ChromaDB 임베딩 파이프라인
-│   ├── musinsa_to_chromadb.py        # ✅ 원본 코드 그대로
+│   ├── musinsa_to_chromadb.py        
 │   ├── Dockerfile                     # 임베딩 Docker 이미지
 │   └── requirements.txt
 │
 ├── search-app/                        # 유사 상품 검색 앱
-│   ├── musinsa_detect.py             # ✅ 원본 검색 앱 (Streamlit)
+│   ├── musinsa_detect.py             
 │   ├── Dockerfile                     # 검색 앱 Docker 이미지
-│   └── requirements.txt
-│
-├── detection-service/                 # Azure Custom Vision 연동
-│   ├── detect_defects.py             # 오염/손상 탐지 API
-│   ├── Dockerfile
 │   └── requirements.txt
 │
 ├── main-app/                          # 통합 메인 앱 (최종 UI)
@@ -56,11 +51,7 @@ clothing-resale-project/
 ├── docker-compose.yml                 # 전체 서비스 로컬 테스트
 │
 └── azure-deploy/                      # Azure 배포 스크립트
-    ├── deploy-chromadb-vm.sh         # ChromaDB VM 배포
-    ├── deploy-crawler.sh             # 크롤러 Container Instance 배포
-    ├── deploy-embedding.sh           # 임베딩 Container Instance 배포
-    ├── deploy-search-app.sh          # 검색 앱 Container Apps 배포
-    └── deploy-main-app.sh            # 메인 앱 Container Apps 배포
+    ├── deploy-quide.md
 ```
 
 ---
@@ -318,7 +309,6 @@ docker push clothingresaleacr.azurecr.io/main-app:latest
 - **기능**: 무신사 상품 크롤링 (Selenium)
 - **카테고리**: 상의, 아우터, 바지, 원피스/스커트
 - **출력**: JSON 파일 (상품ID, 브랜드, 제품명, 가격, 이미지URL 등)
-- **원본 유지**: ✅ 100% 그대로 사용
 
 ### 2. `musinsa_to_chromadb.py`
 - **기능**: 
@@ -327,7 +317,6 @@ docker push clothingresaleacr.azurecr.io/main-app:latest
   3. 크롭된 이미지를 FashionCLIP으로 임베딩
   4. ChromaDB에 저장 (카테고리별 컬렉션)
 - **특징**: Streamlit UI 포함 (진행 상황 실시간 표시)
-- **원본 유지**: ✅ 100% 그대로 사용
 
 ### 3. `musinsa_detect.py`
 - **기능**: 
@@ -336,7 +325,6 @@ docker push clothingresaleacr.azurecr.io/main-app:latest
   3. ChromaDB에서 유사 상품 검색
   4. 결과 표시 (유사도 점수 포함)
 - **특징**: Streamlit 기반 웹 앱
-- **원본 유지**: ✅ 100% 그대로 사용
 
 ---
 
@@ -361,15 +349,12 @@ docker push clothingresaleacr.azurecr.io/main-app:latest
 
 ## 📞 문의
 
-- **작성자**: Sumin
-- **프로젝트**: Sookmyung Women's University 졸업 프로젝트
-- **기술 스택**: Azure, Docker, Streamlit, ChromaDB, CLIP, Object Detection
+- **프로젝트**: Sookmyung Women's University 인공지능산업체특강
+- **기술 스택**: Azure, Docker, Streamlit, ChromaDB, CLIP, Object Detection, Custom Vision
 
 ---
 
 ## 📝 참고 사항
 
-- 원본 코드(`musinsa_crawler.py`, `musinsa_to_chromadb.py`, `musinsa_detect.py`)는 수정 없이 그대로 사용
 - Docker 이미지 빌드 시 모델 다운로드로 인해 시간이 걸릴 수 있음 (최초 1회)
 - ChromaDB 데이터는 Azure Files 또는 VM 디스크에 영구 저장 필요
-- 무신사 크롤링은 로봇 탐지를 우회하므로 주의 필요 (법적 리스크 고려)
