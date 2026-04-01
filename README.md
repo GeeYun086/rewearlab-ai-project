@@ -47,6 +47,13 @@ RE:WEAR Lab은 사용자가 업로드한 의류 이미지를 기반으로
 
 ## ✨ 주요 기능
 
+### 🌐 통합 웹 서비스
+- 이미지 업로드 → 분석 → 추천 → 판매글 생성까지 통합 제공
+- Streamlit 기반 UI + Azure Container Apps 배포 환경 구성
+- 책임있는 UI 적용
+
+<br><br>
+
 ### 🔍 1. 의류 상태 분석
 - 의류 이미지 기반 오염 및 손상 여부 탐지
 - 재판매 가능 여부 자동 판단
@@ -76,17 +83,6 @@ RE:WEAR Lab은 사용자가 업로드한 의류 이미지를 기반으로
 
 <p align="center">
   <img src="./img/generate.png" width="600"/>
-</p>
-
-<br><br>
-
-### 🌐 4. 통합 웹 서비스
-- 이미지 업로드 → 분석 → 추천 → 판매글 생성까지 통합 제공
-- Streamlit 기반 UI + Azure Container Apps 배포 환경 구성
-- 책임있는 UI 적용
-
-<p align="center">
-  <img src="./img/ui.png" width="600"/>
 </p>
 
 <br><br><br>
