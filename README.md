@@ -131,7 +131,7 @@ Image Upload
 <br><br><br>
 
 ## 🏗️ 시스템 아키텍처
-<p align="center"> <img src="./assets/architecture.png" width="800"/> </p>
+<p align="center"> <img src="./img/architecture.png" width="800"/> </p>
 
 - YOLOv8 + Custom Vision 기반 Hybrid 모델
 - CLIP 기반 멀티모달 임베딩
