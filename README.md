@@ -138,6 +138,8 @@ Image Upload
 - ChromaDB 기반 유사도 검색
 - Azure 기반 클라우드 인프라 구성
 
+> [자세한 내부 구조 설명 바로가기](https://github.com/GeeYun086/rewearlab-ai-project/tree/main/main)
+
 <br><br><br>
 
 ## 📊 데이터 파이프라인
@@ -194,8 +196,73 @@ Image Upload
 <br><br><br>
 
 ## 📂 프로젝트 구조
-```bash
-
+```text
+rewearlab-ai-project/
+├── img/
+│   ├── analyze.png
+│   ├── architecture.png
+│   ├── generate.png
+│   ├── poster.png
+│   └── recommend.png
+│
+├── main/
+│   ├── crawler/
+│   │   ├── Dockerfile
+│   │   ├── musinsa_crawler.py
+│   │   └── requirements.txt
+│   │
+│   ├── data/
+│   │   ├── 029b7944-313c-45f3-beb8-7603a5199b91/
+│   │   ├── 054eabb6-329e-4ab4-82f3-a06e1b3b5d6d/
+│   │   ├── 3ad600d2-1739-4fa1-96eb-6925d2c004b9/
+│   │   ├── be9ccab6-9ee2-433e-9eb4-42e02f4e72f0/
+│   │   └── chroma.sqlite3
+│   │
+│   ├── embedding/
+│   │   ├── Dockerfile
+│   │   ├── musinsa_to_chromadb.py
+│   │   └── requirements.txt
+│   │
+│   ├── main-app/
+│   │   ├── __pycache__/
+│   │   ├── Dockerfile
+│   │   ├── app.py
+│   │   └── requirements.txt
+│   │
+│   ├── search-app/
+│   │   ├── __pycache__/
+│   │   ├── Dockerfile
+│   │   ├── musinsa_detect.py
+│   │   └── requirements.txt
+│   │
+│   ├── terraform/
+│   │   ├── .gitignore
+│   │   ├── chromadb.tf
+│   │   ├── container-apps.tf
+│   │   ├── main.tf
+│   │   ├── network.tf
+│   │   ├── openai.tf.bak
+│   │   ├── outputs.tf
+│   │   ├── providers.tf
+│   │   ├── storage.tf
+│   │   ├── terraform.tfvars.example
+│   │   └── variables.tf
+│   │
+│   ├── .env.template
+│   ├── ARCHITECTURE.md
+│   ├── QUICKSTART.md
+│   ├── README.md
+│   └── docker-compose.yml
+│
+├── openai/
+│   ├── .env
+│   ├── input.json
+│   └── rewearlab-openai.py
+│
+├── streamlit/
+│   └── rewearlab-webapp.py
+│
+└── README.md
 ```
 
 <br><br><br>
